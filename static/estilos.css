@@ -98,3 +98,67 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--verde2); ou
   .hero h1 { font-size: 1.7rem; }
   .marca span { font-size: 1rem; }
 }
+
+/* ===== Pestañas: Subir foto / Cámara en vivo ===== */
+.pestanas { display: flex; gap: 8px; margin-bottom: 14px; }
+.pestanas .btn {
+  flex: 1;
+  background: #fff;
+  color: var(--verde);
+  border: 2px solid var(--borde);
+  padding: 10px 12px;
+}
+.pestanas .btn.on {
+  background: var(--verde);
+  color: #fff;
+  border-color: var(--verde);
+}
+
+/* ===== Cámara en vivo ===== */
+.camara { position: relative; }
+.camara video {
+  width: 100%;
+  border-radius: 16px;
+  background: #000;
+  border: 3px solid var(--borde);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.camara.activa video { border-color: #e53935; }
+
+.camara .en-vivo {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #e53935;
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: none;
+}
+.camara.activa .en-vivo { display: block; animation: parpadeo 1.2s infinite; }
+@keyframes parpadeo { 50% { opacity: .45; } }
+
+/* Resultado en vivo */
+.vivo-nombre {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: var(--menta);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  font-size: 1.2rem;
+}
+.vivo-nombre b { font-size: 1.35rem; }
+
+.vivo-barra { margin: 8px 0; }
+.vivo-barra small { color: var(--suave); font-weight: 600; }
+.vivo-barra .pista { height: 10px; background: #e3ebe1; border-radius: 6px; overflow: hidden; }
+.vivo-barra .relleno { height: 100%; border-radius: 6px; transition: width .4s ease; }
+
+@media (max-width: 600px) {
+  .pestanas .btn { font-size: .9rem; padding: 10px 8px; }
+  .vivo-nombre { font-size: 1.05rem; }
+}
