@@ -154,6 +154,31 @@ def crear_app(clasificador=None, almacen=None):
                                conteos=conteos, total=sum(conteos.values()),
                                guardado=request.args.get("guardado"))
 
+    @app.post("/api/identificar")
+    def api_identificar():
+        archivo = request.files.get("foto")
+        if not archivo:
+            return jsonify(error="Falta la foto"), 400
+        try:
+            img = Image.open(archivo.stream)
+            img.load()
+        except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
+            return jsonify(error="Imagen no válida"), 400
+        clf = obtener_clasificador()
+        if clf is None:
+            return jsonify(error="Modelo no disponible"), 503
+        items = clf.predecir(img)
+        top, prob = items[0]
+        return jsonify(
+            top=top,
+            nombre=info(top)["nombre"],
+            color=info(top)["color"],
+            pct=round(prob * 100, 1),
+            poca_seguridad=prob < UMBRAL_SEGURIDAD,
+            items=[{"nombre": info(k)["nombre"], "color": info(k)["color"],
+                    "pct": round(p * 100, 1)} for k, p in items],
+        )
+
     # ------------------------------------------------------------ API y estado
     @app.route("/api/avistamientos")
     def api_avistamientos():

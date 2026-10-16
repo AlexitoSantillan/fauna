@@ -7,14 +7,29 @@
 
 <div class="dos">
   <section class="tarjeta">
-    <form method="post" action="{{ url_for('identificar') }}" enctype="multipart/form-data" id="form-foto">
-      <label class="subida" for="foto">
-        <img id="vista" alt="" hidden>
-        <span id="texto-subida">📷 Toca aquí para elegir o tomar una foto</span>
-      </label>
-      <input type="file" name="foto" id="foto" accept="image/*" required hidden>
-      <button class="btn ancho" type="submit" id="enviar">Identificar</button>
-    </form>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn" type="button" id="tab-foto">📁 Subir foto</button>
+      <button class="btn" type="button" id="tab-cam">🎥 Cámara en vivo</button>
+    </div>
+
+    <div id="modo-foto">
+      <form method="post" action="{{ url_for('identificar') }}" enctype="multipart/form-data" id="form-foto">
+        <label class="subida" for="foto">
+          <img id="vista" alt="" hidden>
+          <span id="texto-subida">📷 Toca aquí para elegir o tomar una foto</span>
+        </label>
+        <input type="file" name="foto" id="foto" accept="image/*" required hidden>
+        <button class="btn ancho" type="submit" id="enviar">Identificar</button>
+      </form>
+    </div>
+
+    <div id="modo-cam" hidden>
+      <video id="video" autoplay playsinline muted style="width:100%;border-radius:12px;background:#000"></video>
+      <canvas id="lienzo" hidden></canvas>
+      <button class="btn ancho" type="button" id="btn-cam">▶ Iniciar cámara</button>
+      <div id="vivo" style="margin-top:12px;font-size:1.1rem">Esperando la cámara…</div>
+      <div id="vivo-barras" style="margin-top:8px"></div>
+    </div>
   </section>
 
   <section>
@@ -101,5 +116,70 @@
     b.disabled = true;
     b.textContent = 'Analizando…';
   });
+</script>
+<script>
+  // ---- Pestañas
+  const modoFoto = document.getElementById('modo-foto');
+  const modoCam = document.getElementById('modo-cam');
+  document.getElementById('tab-foto').onclick = () => { modoFoto.hidden = false; modoCam.hidden = true; parar(); };
+  document.getElementById('tab-cam').onclick = () => { modoFoto.hidden = true; modoCam.hidden = false; };
+
+  // ---- Cámara en vivo
+  const video = document.getElementById('video');
+  const lienzo = document.getElementById('lienzo');
+  const vivo = document.getElementById('vivo');
+  const barras = document.getElementById('vivo-barras');
+  const btnCam = document.getElementById('btn-cam');
+  let stream = null, activo = false;
+
+  async function iniciar() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 640 } }, audio: false });
+    } catch (e) {
+      vivo.textContent = '⚠️ No pude abrir la cámara. Acepta el permiso o usa "Subir foto".';
+      return;
+    }
+    video.srcObject = stream;
+    activo = true;
+    btnCam.textContent = '⏹ Detener cámara';
+    bucle();
+  }
+
+  function parar() {
+    activo = false;
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    btnCam.textContent = '▶ Iniciar cámara';
+  }
+
+  btnCam.onclick = () => activo ? parar() : iniciar();
+
+  async function bucle() {
+    while (activo) {
+      if (video.videoWidth) {
+        const w = 320, h = Math.round(w * video.videoHeight / video.videoWidth);
+        lienzo.width = w; lienzo.height = h;
+        lienzo.getContext('2d').drawImage(video, 0, 0, w, h);
+        const blob = await new Promise(r => lienzo.toBlob(r, 'image/jpeg', 0.8));
+        const fd = new FormData();
+        fd.append('foto', blob, 'cuadro.jpg');
+        try {
+          const r = await fetch('/api/identificar', { method: 'POST', body: fd });
+          const d = await r.json();
+          if (d.error) { vivo.textContent = '⚠️ ' + d.error; }
+          else {
+            vivo.innerHTML = `<b style="color:${d.color}">${d.nombre}</b> · ${d.pct} %` +
+              (d.poca_seguridad ? ' ⚠️ <small>poca seguridad</small>' : '');
+            barras.innerHTML = d.items.map(i =>
+              `<div style="margin:4px 0"><small>${i.nombre} ${i.pct} %</small>
+               <div style="background:#ddd;border-radius:6px;height:8px">
+               <div style="width:${i.pct}%;background:${i.color};height:8px;border-radius:6px"></div></div></div>`).join('');
+          }
+        } catch (e) { vivo.textContent = '⚠️ Sin conexión con el servidor'; }
+      }
+      await new Promise(r => setTimeout(r, 700));
+    }
+  }
 </script>
 {% endblock %}
