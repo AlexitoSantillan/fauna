@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block titulo %}Identificar · Fauna amenazada de Huánuco{% endblock %}
+{% block contenido %}
+<h1>Identificar un mamífero</h1>
+
+{% if error %}<div class="aviso error">{{ error }}</div>{% endif %}
+
+<div class="dos">
+  <section class="tarjeta">
+    <form method="post" action="{{ url_for('identificar') }}" enctype="multipart/form-data" id="form-foto">
+      <label class="subida" for="foto">
+        <img id="vista" alt="" hidden>
+        <span id="texto-subida">📷 Toca aquí para elegir o tomar una foto</span>
+      </label>
+      <input type="file" name="foto" id="foto" accept="image/*" required hidden>
+      <button class="btn ancho" type="submit" id="enviar">Identificar</button>
+    </form>
+  </section>
+
+  <section>
+    {% if not resultado %}
+    <div class="tarjeta vacia">
+      <p class="grande">🔎</p>
+      <p>Aquí aparecerá el resultado.</p>
+    </div>
+    {% else %}
+    {% set e = info(resultado.top) %}
+    <div class="tarjeta resultado" style="--c: {{ e.color }}">
+      <img class="foto" src="data:image/jpeg;base64,{{ resultado.foto }}" alt="Tu foto">
+      <h2>{{ e.nombre }}</h2>
+      <p class="cientifico">{{ e.cientifico }}</p>
+      <span class="insignia">{{ e.estado }}</span>
+      <p class="seguridad">{{ resultado.pct }} % <small>de seguridad</small></p>
+      {% if e.dato %}<p>{{ e.dato }}</p>{% endif %}
+      {% if resultado.poca_seguridad %}
+      <div class="aviso">⚠️ Poca seguridad: la foto puede no ser de ninguna de estas 3 especies o no se ve bien el animal.</div>
+      {% endif %}
+      <div class="barras">
+        {% for it in resultado['items'] %}
+        <div class="fila">
+          <div class="et"><span>{{ it.nombre }}</span><b>{{ it.pct }} %</b></div>
+          <div class="pista"><div class="relleno" style="width: {{ it.pct }}%; background: {{ it.color }}"></div></div>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="nota">El modelo solo conoce estas 3 especies. Si es otro animal, elige “Otro animal” abajo.</p>
+    </div>
+    {% endif %}
+  </section>
+</div>
+
+{% if resultado %}
+<section class="tarjeta">
+  <h2>Guardar avistamiento</h2>
+  <form method="post" action="{{ url_for('guardar') }}" class="form">
+    <input type="hidden" name="pred" value="{{ resultado.top }}">
+    <input type="hidden" name="confianza" value="{{ resultado.prob }}">
+    <input type="hidden" name="probs" value="{{ resultado.probs_json }}">
+    <input type="hidden" name="foto" value="{{ resultado.foto }}">
+
+    <label>Especie (puedes corregirla)
+      <select name="especie_final" required>
+        {% for clave, esp in ESPECIES.items() %}
+        <option value="{{ clave }}" {{ 'selected' if clave == resultado.top }}>{{ esp.nombre }}</option>
+        {% endfor %}
+        <option value="otro">{{ OTRO.nombre }}</option>
+      </select>
+    </label>
+    <label>Provincia
+      <select name="provincia" required>
+        {% for p in provincias %}<option>{{ p }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Lugar o referencia (opcional)
+      <input type="text" name="referencia" maxlength="120" placeholder="Ej.: bosque de Carpish, cerca del río...">
+    </label>
+    <label>Tu nombre (opcional)
+      <input type="text" name="observador" maxlength="60">
+    </label>
+    <label class="completo">Notas (opcional)
+      <textarea name="notas" rows="3" maxlength="500" placeholder="Qué viste, cuántos animales, qué hacían..."></textarea>
+    </label>
+    <button class="btn completo" type="submit">Guardar en la base de datos</button>
+  </form>
+</section>
+{% endif %}
+
+<script>
+  const foto = document.getElementById('foto');
+  const vista = document.getElementById('vista');
+  const texto = document.getElementById('texto-subida');
+  foto.addEventListener('change', () => {
+    const f = foto.files[0];
+    if (!f) return;
+    vista.src = URL.createObjectURL(f);
+    vista.hidden = false;
+    texto.textContent = f.name;
+  });
+  document.getElementById('form-foto').addEventListener('submit', () => {
+    const b = document.getElementById('enviar');
+    b.disabled = true;
+    b.textContent = 'Analizando…';
+  });
+</script>
+{% endblock %}

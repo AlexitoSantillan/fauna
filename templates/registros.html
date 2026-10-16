@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block titulo %}Registros · Fauna amenazada de Huánuco{% endblock %}
+{% block contenido %}
+<h1>Avistamientos registrados</h1>
+
+{% if guardado %}<div class="aviso ok">✅ Avistamiento guardado. ¡Gracias por aportar al monitoreo!</div>{% endif %}
+
+<section class="tarjeta">
+  <h2>Panel de monitoreo <small>{{ total }} registros</small></h2>
+  {% set mayor = conteos.values() | max if conteos else 1 %}
+  <div class="barras">
+    {% for clave, e in ESPECIES.items() %}
+    {% set n = conteos.get(clave, 0) %}
+    <div class="fila">
+      <div class="et"><span>{{ e.nombre }}</span><b>{{ n }}</b></div>
+      <div class="pista"><div class="relleno" style="width: {{ (n / mayor * 100) if mayor else 0 }}%; background: {{ e.color }}"></div></div>
+    </div>
+    {% endfor %}
+    {% set n = conteos.get('otro', 0) %}
+    <div class="fila">
+      <div class="et"><span>{{ OTRO.nombre }}</span><b>{{ n }}</b></div>
+      <div class="pista"><div class="relleno" style="width: {{ (n / mayor * 100) if mayor else 0 }}%; background: {{ OTRO.color }}"></div></div>
+    </div>
+  </div>
+</section>
+
+<nav class="filtros">
+  <a href="{{ url_for('registros') }}" class="{{ 'on' if not especie }}">Todos</a>
+  {% for clave, e in ESPECIES.items() %}
+  <a href="{{ url_for('registros', especie=clave) }}" class="{{ 'on' if especie == clave }}">{{ e.nombre }}</a>
+  {% endfor %}
+  <a href="{{ url_for('registros', especie='otro') }}" class="{{ 'on' if especie == 'otro' }}">Otros</a>
+</nav>
+
+{% if not docs %}
+<div class="tarjeta vacia">
+  <p class="grande">🌿</p>
+  <p>Todavía no hay avistamientos{% if especie %} de esta especie{% endif %}.</p>
+  <a class="btn" href="{{ url_for('identificar') }}">Registrar el primero</a>
+</div>
+{% else %}
+<div class="rejilla">
+  {% for d in docs %}
+  {% set e = info(d.especie_final) %}
+  <article class="registro" style="--c: {{ e.color }}">
+    {% if d.foto_b64 %}<img src="data:image/jpeg;base64,{{ d.foto_b64 }}" alt="{{ e.nombre }}" loading="lazy">{% endif %}
+    <div class="cuerpo">
+      <h3>{{ e.nombre }}</h3>
+      {% if e.estado %}<span class="insignia">{{ e.estado }}</span>{% endif %}
+      <p class="meta">📍 {{ d.provincia }}{% if d.referencia %} · {{ d.referencia }}{% endif %}</p>
+      <p class="meta">🕒 {{ d.creado | fecha }}{% if d.observador %} · {{ d.observador }}{% endif %}</p>
+      <p class="meta">🤖 IA: {{ info(d.especie_modelo).nombre }} ({{ '%.0f' | format(d.confianza * 100) }} %)
+        {% if d.confirmada_por_usuario %}· <b>corregida por el usuario</b>{% endif %}</p>
+      {% if d.notas %}<p class="notas">{{ d.notas }}</p>{% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

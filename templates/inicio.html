@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block contenido %}
+<section class="hero">
+  <p class="etiqueta">INNOBEST Huánuco 2026</p>
+  <h1>Innovación que protege nuestra fauna silvestre</h1>
+  <p class="sub">Sube la foto de un mamífero, la inteligencia artificial dice si es una especie
+    amenazada de Huánuco y tu avistamiento queda registrado para el monitoreo.</p>
+  <div class="botones">
+    <a class="btn" href="{{ url_for('identificar') }}">📷 Identificar un animal</a>
+    <a class="btn claro" href="{{ url_for('registros') }}">Ver registros</a>
+  </div>
+</section>
+
+<section class="cifras">
+  <div class="cifra"><b>{{ total }}</b><span>avistamientos registrados</span></div>
+  <div class="cifra"><b>3</b><span>especies amenazadas reconocidas</span></div>
+  <div class="cifra"><b>95,3 %</b><span>de aciertos en validación*</span></div>
+</section>
+
+<section>
+  <h2>¿Qué desafío del INNOBEST atiende?</h2>
+  <div class="dos">
+    {% for etiqueta, titulo, texto in lineas %}
+    <article class="tarjeta">
+      <p class="etiqueta">{{ etiqueta }}</p>
+      <h3>{{ titulo }}</h3>
+      <p>{{ texto }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h2>Especies que reconoce</h2>
+  <div class="tres">
+    {% for clave, e in ESPECIES.items() %}
+    <article class="tarjeta especie" style="--c: {{ e.color }}">
+      <span class="insignia">{{ e.estado }}</span>
+      <h3>{{ e.nombre }}</h3>
+      <p class="cientifico">{{ e.cientifico }}</p>
+      <p>{{ e.dato }}</p>
+      <p class="n">{{ conteos.get(clave, 0) }} avistamientos</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h2>Cómo funciona</h2>
+  <ol class="pasos">
+    <li><b>Sube una foto.</b> Desde tu celular o computadora.</li>
+    <li><b>La IA la analiza.</b> Un modelo entrenado con fotos de las 3 especies da las probabilidades.</li>
+    <li><b>Confirma y guarda.</b> Corriges la especie si hace falta, eliges la provincia y el registro queda en MongoDB.</li>
+  </ol>
+  <p class="nota">* Modelo YOLO11n-cls entrenado 100 épocas con 174 fotos y validado con 43 fotos nuevas.
+    El modelo solo conoce estas 3 especies: ante cualquier otro animal igual elegirá una de las tres,
+    por eso puedes marcar “Otro animal” al guardar.</p>
+</section>
+{% endblock %}

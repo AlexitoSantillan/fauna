@@ -1,0 +1,7 @@
+Aquí va el modelo entrenado, con este nombre exacto:
+
+    best.onnx
+
+Se genera en Colab con:  python convertir_modelo.py best.pt dataset/val
+Luego se descarga best.onnx y se copia a esta carpeta antes de subir el proyecto a GitHub.
+(pesa unos 3 MB, no hay problema en subirlo)

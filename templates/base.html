@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Fauna amenazada de Huánuco{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="marca" href="{{ url_for('inicio') }}">🐾 <span>Fauna Amenazada Huánuco</span></a>
+      <nav>
+        <a href="{{ url_for('inicio') }}" class="{{ 'on' if request.endpoint == 'inicio' }}">Inicio</a>
+        <a href="{{ url_for('identificar') }}" class="{{ 'on' if request.endpoint in ('identificar', 'guardar') }}">Identificar</a>
+        <a href="{{ url_for('registros') }}" class="{{ 'on' if request.endpoint == 'registros' }}">Registros</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie">
+    <div class="wrap pie-in">
+      <span>INNOBEST Huánuco 2026 · Línea 3 y Línea 4</span>
+      <span class="estado {{ db_modo }}">
+        {% if db_modo == 'mongodb' %}● Base de datos: MongoDB conectada
+        {% else %}● Modo local: los registros se pierden al reiniciar{% endif %}
+      </span>
+    </div>
+  </footer>
+</body>
+</html>

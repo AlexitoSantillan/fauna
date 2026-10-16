@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: fauna-huanuco
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 120
+    healthCheckPath: /salud
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: MONGODB_URI
+        sync: false

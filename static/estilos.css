@@ -1,0 +1,100 @@
+:root {
+  --verde: #1b5e20; --verde2: #2e7d32; --menta: #e8f3e6; --fondo: #f5f8f4;
+  --texto: #1d2a1f; --suave: #5a6b5c; --borde: #d7e3d5; --morado: #6a1b9a;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+       background: var(--fondo); color: var(--texto); line-height: 1.5; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+main.wrap { padding-top: 20px; padding-bottom: 40px; }
+h1 { font-size: 1.8rem; margin: .3em 0 .6em; }
+h2 { font-size: 1.3rem; margin: 1.4em 0 .6em; }
+h2 small { font-weight: 400; color: var(--suave); font-size: .85rem; margin-left: 8px; }
+h3 { margin: 0 0 .2em; }
+a { color: var(--verde2); }
+
+.nav { background: var(--verde); color: #fff; position: sticky; top: 0; z-index: 5; }
+.nav-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; flex-wrap: wrap; }
+.marca { color: #fff; text-decoration: none; font-weight: 800; font-size: 1.1rem; }
+.nav nav { display: flex; gap: 4px; }
+.nav nav a { color: #e6f2e5; text-decoration: none; padding: 8px 14px; border-radius: 999px; font-weight: 600; }
+.nav nav a.on, .nav nav a:hover { background: rgba(255,255,255,.18); color: #fff; }
+
+.hero { margin-top: 8px; padding: 34px 26px; border-radius: 20px; color: #fff;
+        background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 55%, #00695c 100%); }
+.hero h1 { font-size: 2.2rem; margin: .2em 0; }
+.hero .sub { max-width: 640px; opacity: .95; font-size: 1.05rem; }
+.etiqueta { text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; font-weight: 700; margin: 0; opacity: .85; }
+.tarjeta .etiqueta { color: var(--morado); opacity: 1; }
+.botones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+.btn { display: inline-block; background: var(--morado); color: #fff; border: 0; border-radius: 12px;
+       padding: 12px 20px; font-size: 1rem; font-weight: 700; text-decoration: none; cursor: pointer; }
+.btn:hover { filter: brightness(1.1); }
+.btn:disabled { opacity: .6; cursor: wait; }
+.btn.claro { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.55); }
+.btn.ancho { width: 100%; margin-top: 12px; }
+
+.cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 16px; }
+.cifra { background: #fff; border: 1px solid var(--borde); border-radius: 16px; padding: 16px; text-align: center; }
+.cifra b { display: block; font-size: 2rem; color: var(--verde); }
+.cifra span { color: var(--suave); font-size: .9rem; }
+
+.tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 16px; padding: 20px; }
+.tarjeta.vacia { text-align: center; color: var(--suave); padding: 40px 20px; }
+.grande { font-size: 2.4rem; margin: 0; }
+.dos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.tres { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.especie { border-top: 6px solid var(--c); }
+.insignia { display: inline-block; background: var(--c); color: #fff; border-radius: 999px; padding: 2px 12px; font-size: .82rem; font-weight: 700; }
+.cientifico { font-style: italic; color: var(--suave); margin: 0 0 .5em; }
+.n { color: var(--suave); font-size: .9rem; margin-bottom: 0; }
+.pasos { padding-left: 20px; }
+.pasos li { margin: 8px 0; }
+.nota { color: var(--suave); font-size: .85rem; }
+
+.subida { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px;
+          min-height: 220px; border: 2px dashed var(--verde2); border-radius: 14px; background: var(--menta);
+          cursor: pointer; text-align: center; padding: 12px; overflow: hidden; font-weight: 600; color: var(--verde); }
+.subida img { max-width: 100%; max-height: 300px; border-radius: 10px; }
+
+.resultado { border-top: 6px solid var(--c); }
+.resultado .foto { width: 100%; max-height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; }
+.resultado h2 { margin: 0; }
+.seguridad { font-size: 2.2rem; font-weight: 800; margin: 10px 0 4px; }
+.seguridad small { font-size: .9rem; font-weight: 400; color: var(--suave); }
+.aviso { margin: 12px 0; padding: 10px 14px; border-radius: 10px; background: #fff3e0; border: 1px solid #ffb74d; }
+.aviso.error { background: #fdecea; border-color: #ef9a9a; }
+.aviso.ok { background: #e8f5e9; border-color: #81c784; }
+
+.barras { margin-top: 14px; }
+.fila { margin: 10px 0; }
+.et { display: flex; justify-content: space-between; font-size: .92rem; margin-bottom: 4px; }
+.pista { height: 10px; border-radius: 999px; background: #e3e9e1; overflow: hidden; }
+.relleno { height: 100%; border-radius: 999px; }
+
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.form label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: .92rem; }
+.form .completo { grid-column: 1 / -1; }
+input[type=text], select, textarea { font: inherit; padding: 10px 12px; border: 1px solid #b9c9b7; border-radius: 10px; background: #fff; color: inherit; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--verde2); outline-offset: 1px; }
+
+.filtros { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0; }
+.filtros a { text-decoration: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--borde); background: #fff; color: var(--texto); font-weight: 600; font-size: .9rem; }
+.filtros a.on { background: var(--verde2); border-color: var(--verde2); color: #fff; }
+.rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.registro { background: #fff; border: 1px solid var(--borde); border-top: 5px solid var(--c); border-radius: 16px; overflow: hidden; }
+.registro img { width: 100%; height: 190px; object-fit: cover; display: block; }
+.registro .cuerpo { padding: 14px; }
+.registro .meta { margin: 4px 0; font-size: .86rem; color: var(--suave); }
+.registro .notas { margin: 8px 0 0; font-size: .92rem; }
+
+.pie { background: #14361a; color: #cfe5cf; font-size: .85rem; }
+.pie-in { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-top: 14px; padding-bottom: 14px; }
+.estado.mongodb { color: #8be28b; }
+.estado.memoria { color: #ffcc80; }
+
+@media (max-width: 560px) {
+  .hero h1 { font-size: 1.7rem; }
+  .marca span { font-size: 1rem; }
+}

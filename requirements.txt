@@ -1,0 +1,7 @@
+flask>=3.0
+gunicorn>=22.0
+pymongo>=4.7
+dnspython>=2.6
+onnxruntime>=1.19
+numpy>=1.26
+pillow>=10.3
